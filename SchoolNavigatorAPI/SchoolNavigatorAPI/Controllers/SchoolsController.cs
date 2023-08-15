@@ -110,6 +110,34 @@ public class SchoolsController : ControllerBase
         return result == null ? NotFound("schools not found") : Ok(result);
     }
     
+    [HttpGet("byId")]
+    public IActionResult Get(int id)
+    {
+        var result = ReadById(id).Result;
+
+        return result == null ? NotFound("schools not found") : Ok(result);
+    }
+
+    private static async Task<School?> ReadById(int id)
+    {
+        const string commandText = "SELECT * FROM schools WHERE id = @id";
+        
+        await using var cmd = new NpgsqlCommand(commandText, DataBase.Connection);
+        
+        cmd.Parameters.AddWithValue("id", id);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var school = Read(reader);
+            return school;
+        }
+
+        await reader.DisposeAsync();
+        
+        return null;
+    }
+
     private static async Task<List<School>?> ReadAll()
     {
         var schools = new List<School>();
