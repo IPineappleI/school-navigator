@@ -215,4 +215,35 @@ public class SchoolsController : ControllerBase
 
         return cmd.ExecuteScalarAsync().Result as long?;
     }
+
+    [HttpDelete]
+    public IActionResult Delete(int id)
+    {
+        if (Get(id) is NotFoundObjectResult)
+        {
+            return NoContent();
+        }
+
+        try
+        {
+            DeleteSchool(id).Wait();
+        }
+        catch (AggregateException e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return Ok("school deleted successfully");
+    }
+    
+    private static async Task DeleteSchool(int id)
+    {
+        const string commandText = "DELETE FROM schools WHERE id = (@id)";
+        
+        await using var cmd = new NpgsqlCommand(commandText, DataBase.Connection);
+        
+        cmd.Parameters.AddWithValue("id", id);
+        
+        await cmd.ExecuteNonQueryAsync();
+    }
 }
