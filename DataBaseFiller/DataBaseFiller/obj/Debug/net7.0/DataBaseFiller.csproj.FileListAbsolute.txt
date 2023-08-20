@@ -1,0 +1,15 @@
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\bin\Debug\net7.0\DataBaseFiller.exe
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\bin\Debug\net7.0\DataBaseFiller.deps.json
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\bin\Debug\net7.0\DataBaseFiller.runtimeconfig.json
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\bin\Debug\net7.0\DataBaseFiller.dll
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\bin\Debug\net7.0\DataBaseFiller.pdb
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.csproj.AssemblyReference.cache
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.AssemblyInfoInputs.cache
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.AssemblyInfo.cs
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.csproj.CoreCompileInputs.cache
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.dll
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\refint\DataBaseFiller.dll
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.pdb
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\DataBaseFiller.genruntimeconfig.cache
+C:\Users\pine1\RiderProjects\DataBaseFiller\DataBaseFiller\obj\Debug\net7.0\ref\DataBaseFiller.dll
