@@ -1,0 +1,139 @@
+* {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    .home-container {
+        flex-direction: column;
+        display: flex;
+        min-height: 100vh;
+
+        .top {
+            width: 100%;
+            display: flex;
+            height: 100px;
+            justify-content: center;
+            justify-self: flex-start;
+            align-items: center;
+            background-color: #1849b3;
+            .main-title {
+                color: ghostwhite;
+            }
+        }
+
+        .body {
+            margin: 15px;
+            flex: 1;
+
+            .search-bar {
+                display: flex;
+                margin-bottom: 15px;
+
+                .search {
+                    width: 30%;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    border: 0.5px solid lightgray;
+                    margin-left: 15px;
+                    padding: 10px;
+                    border-radius: 10px;
+
+                    & input {
+                        width: 100%;
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        padding: 10px;
+                    }
+                }
+
+                .button {
+                    display: flex;
+                    justify-self: center;
+                    margin-left: 10px;
+                    width: 3%;
+
+                    & button {
+                        border-radius: 10px;
+                        background-color: #1849b3;
+                        border: none;
+                        width: 110%;
+                        cursor: pointer;
+
+                        & img {
+                            filter: invert(100%);
+                            cursor: pointer;
+                        }
+                    }
+
+                }
+            }
+
+            .tags-info {
+                display: flex;
+
+                .tags {
+                    border-radius: 20px;
+                    display: flex;
+                    margin-left: 15px;
+                    flex-wrap: wrap;
+
+                    & li {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 15px;
+                        margin-right: 10px;
+                        padding: 5px;
+                        cursor: pointer;
+                        margin-bottom: 10px;
+
+                        & img {
+                            margin: 5px
+                        }
+                    }
+                }
+            }
+
+            .sorts-info {
+                display: flex;
+                align-items: center;
+                margin-left: 15px;
+
+                .sorts {
+                    border-radius: 20px;
+                    display: flex;
+                    margin-left: 15px;
+                    flex-wrap: wrap;
+
+                    & li {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 15px;
+                        padding: 5px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+
+                        & img {
+                            margin: 5px
+                        }
+                    }
+                }
+            }
+
+            .data {
+                flex: 1;
+                overflow-y: scroll;
+            }
+        }
+
+        .bottom {
+            width: 100%;
+            height: 100px;
+            bottom: 0;
+            background-color: #1849b3;
+            color: white;
+        }
+    }
+}
