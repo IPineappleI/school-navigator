@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     ScrollView,
     Text,
@@ -7,18 +7,41 @@ import {
     TouchableOpacity,
     Alert,
     Linking,
-    Pressable,
+    Pressable, FlatList,
 } from "react-native";
 import {Image} from 'expo-image';
 import ImageView from "react-native-image-viewing";
-import {YANDEX_MAP_LINK} from "../constants/constants";
+import {ProfileTags} from "../constants/tags";
+import ProfileClass from "../components/ProfileClass";
+import {OlympiadInfo} from "../constants/olympiadInfo";
+import {YANDEX_MAP_LINK} from "../constants/links";
 
 export default function SchoolPage({route}) {
     const {school} = route.params;
-
-    const [visible, setIsVisible] = useState(false);
+    const [profileTags, setProfileTags] = useState(ProfileTags);
+    const hasAnyClass = [school.mathClass, school.itClass, school.engineeringClass, school.businessClass].some(Boolean);
+    const [isImageVisible, setIsImageVisible] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
+    useEffect(() => {
+        const updatedProfileTags = profileTags.map(tag => {
+            if (tag.key === 'math' && school.mathClass) {
+                return {...tag, value: true};
+            }
+            if (tag.key === 'it' && school.itClass) {
+                return {...tag, value: true};
+            }
+            if (tag.key === 'engineering' && school.engineeringClass) {
+                return {...tag, value: true};
+            }
+            if (tag.key === 'business' && school.businessClass) {
+                return {...tag, value: true};
+            }
+            return tag;
+        });
+
+        setProfileTags(updatedProfileTags);
+    }, []);
 
     const OpenURLButton = ({url, children}) => {
         const handlePress = useCallback(async () => {
@@ -38,64 +61,33 @@ export default function SchoolPage({route}) {
 
     return (
         <ScrollView style={styles.container}>
-            <TouchableOpacity onPress={() => setIsVisible(true)}>
+            <TouchableOpacity onPress={() => setIsImageVisible(true)}>
                 <Image source={{uri: school.imageURL}} style={styles.schoolImage}/>
             </TouchableOpacity>
             <ImageView
                 images={[{uri: school.imageURL}]}
                 imageIndex={0}
-                visible={visible}
-                onRequestClose={() => setIsVisible(false)}
+                visible={isImageVisible}
+                onRequestClose={() => setIsImageVisible(false)}
             />
-
             <Text style={styles.schoolLabelText}>{school.name}</Text>
 
             {
-                (school.mathClass || school.itClass || school.engineeringClass || school.businessClass) &&
-                (
+                hasAnyClass && (
                     <>
                         <Text style={styles.schoolProfilesHeaderText}>Профили обучения (10-11 класс)</Text>
-                        <ScrollView
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{padding: 10, flexDirection: "row"}}
-                        >
-                            {
-                                school.mathClass &&
-                                <View style={[styles.profileContainer, {backgroundColor: "#00ced1"}]}>
-                                    <Image source={require("..//..//assets/math-class.png")}
-                                           style={styles.profileIcon}/>
-                                    <Text style={styles.schoolProfileText}>Мат. класс</Text>
-                                </View>
-                            }
-
-                            {
-                                school.itClass &&
-                                <View style={[styles.profileContainer, {backgroundColor: "#a4a0ff",}]}>
-                                    <Image source={require("..//..//assets/it-class.png")}
-                                           style={styles.profileIcon}/>
-                                    <Text style={styles.schoolProfileText}>ИТ класс</Text>
-                                </View>
-                            }
-
-                            {
-                                school.engineeringClass &&
-                                <View style={[styles.profileContainer, {backgroundColor: "#fae847",}]}>
-                                    <Image source={require("..//..//assets/engineering-class.png")}
-                                           style={styles.profileIcon}/>
-                                    <Text style={styles.schoolProfileText}>Инженерный класс</Text>
-                                </View>
-                            }
-
-                            {
-                                school.businessClass &&
-                                <View style={[styles.profileContainer, {backgroundColor: "#e38126",}]}>
-                                    <Image source={require("..//..//assets/bussiness-class.png")}
-                                           style={styles.profileIcon}/>
-                                    <Text style={styles.schoolProfileText}>Бизнес-класс</Text>
-                                </View>
-                            }
-                        </ScrollView>
+                        <View style={{marginBottom: 10, marginTop: 5}}>
+                            <FlatList data={profileTags.filter((item) => item.value)}
+                                      keyExtractor={item => item.id.toString()}
+                                      renderItem={({item}) =>
+                                          <ProfileClass tag={item}/>
+                                      }
+                                      estimatedItemSize={100}
+                                      horizontal={true}
+                                      showsHorizontalScrollIndicator={false}
+                                      contentContainerStyle={{paddingHorizontal: 15}}
+                            />
+                        </View>
                     </>
                 )
             }
@@ -131,13 +123,14 @@ export default function SchoolPage({route}) {
                         </View>
                         <Text style={styles.schoolInfoBlockTitleText}>{school.olympiadWinnersAndAwardees}</Text>
                         <View style={styles.infoBlockSubtitleContainer}>
-                            <Text style={styles.schoolInfoBlockSubtitleText}>олимпиадник(-ов) всероссийского уровня</Text>
+                            <Text style={styles.schoolInfoBlockSubtitleText}>олимпиадник(-ов) всероссийского
+                                уровня</Text>
                         </View>
                         {
                             school.olympiadWinnersAndAwardees > 0 && (
                                 <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.moreButton}>
                                     <View>
-                                        <Text style={styles.buttonText}>{expanded ? "Свернуть": "Подробнее"}</Text>
+                                        <Text style={styles.buttonText}>{expanded ? "Свернуть" : "Подробнее"}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )
@@ -148,125 +141,24 @@ export default function SchoolPage({route}) {
                             <View style={styles.additionalInfoContainer}>
                                 <Text style={styles.schoolInfoBlockSubtitleText}>Среди них:</Text>
                                 <View>
-                                    {
-                                        school.mathWinners > 0 &&
-                                        <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                            <View style={styles.additionalInfoSubtitleContainer}>
-                                                <View style={styles.tag}/>
-                                                <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                    Победителей всероссийской олимпиады школьников по математике
-                                                </Text>
-                                            </View>
-                                            <Text style={styles.schoolInfoBlockTitleText}>
-                                                {school.mathWinners}
-                                            </Text>
-                                        </View>
-                                    }
-                                    {
-                                        school.mathAwardees > 0 &&
-                                        <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                            <View style={styles.additionalInfoSubtitleContainer}>
-                                                <View style={styles.tag}/>
-                                                <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                    Призеров всероссийской олимпиады школьников по математике
-                                                </Text>
-                                            </View>
-                                            <Text style={styles.schoolInfoBlockTitleText}>
-                                                {school.mathAwardees}
-                                            </Text>
-                                        </View>
-
-                                    }
-                                    {
-                                        school.csWinners > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
+                                    {OlympiadInfo.map((item) => (
+                                        (school[item.field] > 0) && (
+                                            <View
+                                                key={item.field}
+                                                style={[styles.infoLineContainer, { justifyContent: "space-between" }]}
+                                            >
                                                 <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
+                                                    <View style={styles.tag} />
                                                     <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Победителей всероссийской олимпиады школьников по информатике
+                                                        {item.label}
                                                     </Text>
                                                 </View>
                                                 <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.csWinners}
+                                                    {school[item.field]}
                                                 </Text>
                                             </View>
                                         )
-                                    }
-                                    {
-                                        school.csAwardees > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                                <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
-                                                    <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Призеров всероссийской олимпиады школьников по информатике
-                                                    </Text>
-                                                </View>
-                                                <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.csAwardees}
-                                                </Text>
-                                            </View>
-                                        )
-                                    }
-                                    {
-                                        school.economicsWinners > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                                <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
-                                                    <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Победителей всероссийской олимпиады школьников по экономике
-                                                    </Text>
-                                                </View>
-                                                <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.economicsWinners}
-                                                </Text>
-                                            </View>
-                                        )
-                                    }
-                                    {
-                                        school.economicsAwardees > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                                <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
-                                                    <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Призеров всероссийской олимпиады школьников по экономкие
-                                                    </Text>
-                                                </View>
-                                                <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.economicsAwardees}
-                                                </Text>
-                                            </View>
-                                        )
-                                    }
-                                    {
-                                        school.physicsWinners > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                                <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
-                                                    <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Победителей всероссийской олимпиады школьников по физике
-                                                    </Text>
-                                                </View>
-                                                <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.physicsWinners}
-                                                </Text>
-                                            </View>
-                                        )
-                                    }
-                                    {
-                                        school.physicsAwardees > 0 && (
-                                            <View style={[styles.infoLineContainer, {justifyContent: "space-between"}]}>
-                                                <View style={styles.additionalInfoSubtitleContainer}>
-                                                    <View style={styles.tag}/>
-                                                    <Text style={styles.schoolInfoBlockSubtitleText}>
-                                                        Призеров всероссийской олимпиады школьников по физике
-                                                    </Text>
-                                                </View>
-                                                <Text style={styles.schoolInfoBlockTitleText}>
-                                                    {school.physicsAwardees}
-                                                </Text>
-                                            </View>
-                                        )
-                                    }
+                                    ))}
                                 </View>
                             </View>
                         )
@@ -307,21 +199,18 @@ export default function SchoolPage({route}) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     schoolInfoContainer: {
-        flex: 1,
         marginHorizontal: 15,
-        marginBottom: 20
+        marginBottom: 15
     },
     infoLineContainer: {
-        flex: 1,
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 10
     },
     infoBlockContainer: {
-        flex: 1,
         padding: 10,
         borderRadius: 15,
         marginBottom: 5
@@ -344,20 +233,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    profileContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        height: 135,
-        width: 95,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: "rgba(158, 150, 150, .3)",
-        marginRight: 10
-    },
-    profileIcon: {
-        width: 50,
-        height: 50
-    },
     schoolImage: {
         width: '100%',
         height: 300,
@@ -374,16 +249,10 @@ const styles = StyleSheet.create({
     schoolProfilesHeaderText: {
         fontFamily: "os-regular",
         fontSize: 18,
-        paddingLeft: 12,
+        paddingLeft: 15,
         marginTop: 15,
-        marginBottom: 5,
+        marginBottom: 10,
         alignSelf: "flex-start"
-    },
-    schoolProfileText: {
-        fontFamily: "os-regular",
-        fontSize: 13,
-        paddingTop: 15,
-        textAlign: "center"
     },
     schoolInfoBlockTitleText: {
         fontFamily: "os-regular",
@@ -395,7 +264,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginLeft: 10
     },
-    schoolInfoBlockIcon:{
+    schoolInfoBlockIcon: {
         width: 50,
         height: 50
     },
