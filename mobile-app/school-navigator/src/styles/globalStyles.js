@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import {CONTENT_BACKGROUND, HEADER_BACKGROUND} from "../constants/constants";
+import {CONTENT_BACKGROUND, HEADER_BACKGROUND} from "../constants/colors";
 
 export const globalStyles = StyleSheet.create({
     mainSafeArea: {
